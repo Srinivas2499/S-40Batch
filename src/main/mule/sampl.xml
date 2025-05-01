@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3782dae4-fe64-4dfe-aec3-0f5ad87b7634" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="4b19dda0-06ff-4d3a-9c46-087427885a5b" >
+		<wsc:connection wsdlLocation="http://www.w3.org/2001/XMLSchema-instance" service="Cancatination" port="CancatinationSoap" />
+	</wsc:config>
+	<flow name="samplFlow" doc:id="11e8a510-0359-4f14-9b74-cd12c00c6066" >
+		<http:listener doc:name="Listener" doc:id="b7eb2ccd-ab11-4a28-90fe-d5e8a0cab27b" config-ref="HTTP_Listener_config" path="/soap"/>
+		<ee:transform doc:name="Transform Message" doc:id="56b32e5f-530a-4969-9a7b-e5b23df588b5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="Cancatination" doc:name="Consume" doc:id="a697ee13-5f5f-4995-9dc5-390ded368aa9" config-ref="Web_Service_Consumer_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="eed7381d-8ca0-4c03-8abf-27774b79065f" message="#[payload]"/>
+	</flow>
+</mule>
